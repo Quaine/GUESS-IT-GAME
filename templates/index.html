@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GUESS IT GAME</title>
+<style>
+    body {
+        background-image: url("/static/images/skeleton_warrior.jpg");
+        /* background-color: #121212; */
+        color: #e0e0e0;
+        font-family: 'Consolas', monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+       
+    }
+
+    h1 {
+        color: #08eaf1; /* Matrix/Terminal Green */
+        text-shadow: 0 0 10px #2ea8f4;
+    }
+    
+    .container {
+        background: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
+        backdrop-filter: blur(15px);           /* The "frosted" effect */
+        -webkit-backdrop-filter: blur(15px);   /* Safari support */
+        border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle highlight edge */
+        padding: 2rem;
+        border-radius: 20px;
+        max-width: 320px; /* Set a maximum width */
+        width: 90%; /* Make it responsive */
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6);
+        text-align: center;
+    }
+
+    input {
+        padding: 10px;
+        border: 1px solid #333;
+        border-radius: 8px;
+        background: #27414a;
+        color: #fff;
+        outline: none;
+    }
+    button {
+        padding: 10px 20px;
+        background: linear-gradient(45deg, #08a7ac, #2ea8f4); /* Gradient from current to a similar blue */
+        color: white;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        cursor: pointer;
+        margin-left: 10px;
+    }
+    button:hover { background: linear-gradient(45deg, #045c5f, #1e71a4);
+                   color : white;}
+
+    p {
+        color: #08eaf1;
+    }
+
+    #typingText::after {
+        content: '_';
+        animation: blink 0.8s infinite;
+    }
+
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+    }
+
+    #resultMessage {
+        margin-top: 20px;
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    /* New classes for status colors */
+    .success {
+        color: #08eaf1;
+    }
+
+    .error {
+        color: #ff4c4c;
+    }
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>GUESS IT </h1>    
+        </header>
+        <p id="typingText"></p>
+        
+        <input type="number" id="ageInput" placeholder="Enter age">
+        <button id="verifyBtn">Verify</button>
+        <p id="resultMessage"></p>
+    </div>
+
+    <script>
+        const textToType = "Guess the age to unlock system ...";
+        const typingElement = document.getElementById('typingText');
+        let charIndex = 0;
+        let resultTimeout;
+
+        function typeEffect() {
+            if (charIndex < textToType.length) {
+                typingElement.textContent += textToType.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeEffect, 100); // Speed of typing (100ms per char)
+            } else {
+                // Once finished typing, wait 5 seconds then restart
+                setTimeout(() => {
+                    typingElement.textContent = "";
+                    charIndex = 0;
+                    typeEffect();
+                }, 5000);
+            }
+        }
+
+        // Start the typing effect on load
+        typeEffect();
+
+        document.getElementById('verifyBtn').addEventListener('click', async () => {
+            const ageInput = document.getElementById('ageInput').value;
+            const resultMessage = document.getElementById('resultMessage');
+
+            // Clear previous message and timer immediately so the user knows the button was clicked
+            if (resultTimeout) clearTimeout(resultTimeout);
+            resultMessage.textContent = "";
+
+            const response = await fetch('/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ age: ageInput }),
+            });
+
+            const data = await response.json();
+            resultMessage.textContent = data.message;
+            
+            // Update classes instead of setting style.color directly
+            resultMessage.classList.remove('success', 'error');
+            resultMessage.classList.add(data.success ? 'success' : 'error');
+
+            // Automatically hide the message after 3 seconds
+            resultTimeout = setTimeout(() => {
+                resultMessage.textContent = "";
+                resultMessage.classList.remove('success', 'error');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
