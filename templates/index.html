@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>GUESS IT GAME</title>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Angkor&family=Dancing+Script:wght@400..700&display=swap');
+
     body {
         background-image: url("/static/images/skeleton_warrior.jpg");
         /* background-color: #121212; */
@@ -19,6 +21,7 @@
     }
 
     h1 {
+        font-family: 'Angkor', serif;
         color: #08eaf1; /* Matrix/Terminal Green */
         text-shadow: 0 0 10px #2ea8f4;
     }
@@ -40,8 +43,9 @@
         padding: 10px;
         border: 1px solid #333;
         border-radius: 8px;
-        background: #27414a;
-        color: #fff;
+        background: #272828;
+        color: grey;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
         outline: none;
     }
     button {
@@ -58,7 +62,7 @@
                    color : white;}
 
     p {
-        color: #08eaf1;
+        color: #FED289;
     }
 
     .typing-screen {
@@ -114,7 +118,7 @@
 <body>
     <div class="container">
         <header>
-            <h1>GUESS IT </h1>    
+            <h1>GUESS IT! </h1>    
         </header>
         <div class="typing-screen">
         <p id="typingText"></p>
